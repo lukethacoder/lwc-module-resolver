@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@types/node': ^18.15.5
+  '@types/resolve': ^1.20.2
   resolve: ^1.22.1
   typescript: ^5.0.2
 
@@ -10,12 +11,17 @@ dependencies:
 
 devDependencies:
   '@types/node': 18.15.5
+  '@types/resolve': 1.20.2
   typescript: 5.0.2
 
 packages:
 
   /@types/node/18.15.5:
     resolution: {integrity: sha512-Ark2WDjjZO7GmvsyFFf81MXuGTA/d6oP38anyxWOL6EREyBKAxKoFHwBhaZxCfLRLpO8JgVXwqOwSwa7jRcjew==}
+    dev: true
+
+  /@types/resolve/1.20.2:
+    resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
     dev: true
 
   /function-bind/1.1.1:
