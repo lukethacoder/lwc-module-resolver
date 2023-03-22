@@ -1,0 +1,32 @@
+{
+  "name": "lukes-lwc-module-loader",
+  "version": "2.40.1",
+  "description": "An opinionated edit to the @lwc/module-loader package",
+  "author": "Luke Secomb",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/salesforce/lwc.git",
+    "directory": "packages/@lwc/module-resolver"
+  },
+  "bugs": {
+    "url": "https://github.com/salesforce/lwc/issues"
+  },
+  "files": [
+    "dist/"
+  ],
+  "main": "dist/commonjs/index.js",
+  "typings": "dist/types/index.d.ts",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput  --incremental"
+  },
+  "dependencies": {
+    "resolve": "^1.22.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5",
+    "typescript": "^5.0.2"
+  }
+}
