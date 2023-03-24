@@ -27,6 +27,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = require("path");
 const types_1 = require("./types");
 const utils_1 = require("./utils");
+const errors_1 = require("./errors");
+const PACKAGE_NAME = '📦 @lukethacoder/lwc-module-resolver';
 /**
  * Override of the `@lwc/module-loader` resolveModuleFromDir method
  * @param specifier
@@ -35,34 +37,32 @@ const utils_1 = require("./utils");
  * @returns
  */
 function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
-    const { dir } = moduleRecord;
+    const { dir, namespace } = moduleRecord;
     const { rootDir } = opts;
-    console.log('resolveModuleFromDirEdit dir ', dir);
     const absModuleDir = (0, path_1.isAbsolute)(dir) ? dir : (0, path_1.join)(rootDir, dir);
-    console.log('resolveModuleFromDirEdit absModuleDir ', absModuleDir);
     if (!fs_1.default.existsSync(absModuleDir)) {
-        throw new Error(`Invalid dir module record "${JSON.stringify(moduleRecord)}", directory ${absModuleDir} doesn't exists`);
+        throw new errors_1.LwcConfigError(`Invalid dir module record "${JSON.stringify(moduleRecord)}", directory "${absModuleDir}" does not exist`, { scope: absModuleDir });
     }
-    // TODO: check the config file for namespace values, else assume the parent folder is the namespace
-    specifier = 'c/lwcCard';
     // A module dir record can only resolve module specifier with the following form "[ns]/[name]".
     // We can early exit if the required specifier doesn't match.
-    const parts = specifier.split('/');
-    // console.log('resolveModuleFromDirEdit parts ', parts)
-    // if (parts.length !== 2) {
-    //   return
-    // }
+    let parts = specifier.split('/');
+    if (parts.length !== 2) {
+        // check if namespace has been manually set here
+        if (!namespace) {
+            return;
+        }
+    }
     const [ns, name] = parts;
-    console.log('resolveModuleFromDirEdit ns ', ns);
-    console.log('resolveModuleFromDirEdit name ', name);
-    const moduleDir = (0, path_1.join)(absModuleDir, name);
-    console.log('resolveModuleFromDirEdit moduleDir ', moduleDir);
+    // TODO: handle namespaced folders too
+    const moduleDir = namespace
+        ? (0, path_1.join)(absModuleDir, name)
+        : (0, path_1.join)(absModuleDir, ns, name);
     // Exit if the expected module directory doesn't exists.
     if (!fs_1.default.existsSync(moduleDir)) {
+        console.warn(`: Module does not exist ${ns}/${name}`);
         return;
     }
     const entry = (0, utils_1.getModuleEntry)(moduleDir, name, opts);
-    console.log('resolveModuleFromDirEdit entry ', entry);
     return (0, utils_1.createRegistryEntry)(entry, specifier, types_1.RegistryType.dir, opts);
 }
 exports.resolveModuleFromDirEdit = resolveModuleFromDirEdit;

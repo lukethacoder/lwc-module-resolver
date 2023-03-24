@@ -15,6 +15,7 @@ export interface AliasModuleRecord {
 }
 export interface DirModuleRecord {
     dir: string;
+    namespace?: string;
 }
 export interface NpmModuleRecord {
     npm: string;

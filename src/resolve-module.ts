@@ -16,7 +16,6 @@ import {
   isDirModuleRecord,
   isNpmModuleRecord,
   getLwcConfig,
-  getModuleEntry,
   normalizeConfig,
   validateNpmConfig,
   mergeModules,

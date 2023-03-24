@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.resolveModule = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-// import resolve from 'resolve'
+const resolve_1 = __importDefault(require("resolve"));
 const utils_1 = require("./utils");
 const errors_1 = require("./errors");
 const types_1 = require("./types");
@@ -36,7 +36,7 @@ function resolveModuleFromNpm(specifier, npmModuleRecord, opts) {
     const { npm, map: aliasMapping } = npmModuleRecord;
     let pkgJsonPath;
     try {
-        pkgJsonPath = resolve.sync(`${npm}/package.json`, {
+        pkgJsonPath = resolve_1.default.sync(`${npm}/package.json`, {
             basedir: opts.rootDir,
             preserveSymlinks: true,
         });
