@@ -21,6 +21,7 @@ import {
 } from './types'
 import { isObject } from './shared'
 
+export const IS_DEBUG = false
 const PACKAGE_JSON = 'package.json'
 const LWC_CONFIG_FILE = 'lwc.config.json'
 

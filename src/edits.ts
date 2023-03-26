@@ -11,7 +11,7 @@
  *   "modules": [
  *     {
  *       "dir": "force-app/main/default/lwc",
- *       "name": "c"
+ *       "namespace": "c"
  *     }
  *   ]
  * }
@@ -24,8 +24,7 @@ import { isAbsolute, join } from 'path'
 import { RegistryEntry, DirModuleRecord, RegistryType } from './types'
 import { createRegistryEntry, getModuleEntry } from './utils'
 import { LwcConfigError } from './errors'
-
-const PACKAGE_NAME = '📦 @lukethacoder/lwc-module-resolver'
+import { IS_DEBUG } from './utils'
 
 /**
  * Override of the `@lwc/module-loader` resolveModuleFromDir method
@@ -39,7 +38,8 @@ export function resolveModuleFromDirEdit(
   moduleRecord: DirModuleRecord,
   opts: any
 ): RegistryEntry | undefined {
-  const { dir, namespace } = moduleRecord
+  const { dir, namespace: namespaceConfig } = moduleRecord
+  IS_DEBUG && console.log('\n📦 resolveModuleFromDirEdit ')
   const { rootDir } = opts
 
   const absModuleDir = isAbsolute(dir) ? dir : join(rootDir, dir)
@@ -53,26 +53,38 @@ export function resolveModuleFromDirEdit(
     )
   }
 
+  IS_DEBUG && console.log('   rootDir ', rootDir)
+  IS_DEBUG && console.log('   dir ', dir)
+  IS_DEBUG && console.log('   specifier ', specifier)
+
   // A module dir record can only resolve module specifier with the following form "[ns]/[name]".
   // We can early exit if the required specifier doesn't match.
-  let parts = specifier.split('/')
-  if (parts.length !== 2) {
-    // check if namespace has been manually set here
-    if (!namespace) {
-      return
-    }
+  const parts = specifier.split('/')
+  const namespace = parts[0]
+  const name = parts[1]
+
+  IS_DEBUG && console.log(`   { namespace, name} `, { namespace, name })
+
+  // check we have both a namespace and a name for the import
+  if (!((namespace || namespaceConfig) && name)) {
+    return
   }
 
-  const [ns, name] = parts
-
-  // TODO: handle namespaced folders too
-  const moduleDir = namespace
+  IS_DEBUG && console.log('   namespaceConfig ', namespaceConfig)
+  IS_DEBUG && console.log('   absModuleDir ', absModuleDir)
+  // handle both namespaced folders and namespace config
+  const moduleDir = namespaceConfig
     ? join(absModuleDir, name)
-    : join(absModuleDir, ns, name)
+    : join(absModuleDir, namespace, name)
+  IS_DEBUG && console.log('   moduleDir ', moduleDir)
 
   // Exit if the expected module directory doesn't exists.
   if (!fs.existsSync(moduleDir)) {
-    console.warn(`: Module does not exist ${ns}/${name}`)
+    console.warn(
+      `${moduleDir}: Module does not exist ${
+        namespace || namespaceConfig
+      }/${name}`
+    )
     return
   }
 
