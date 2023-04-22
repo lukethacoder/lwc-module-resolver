@@ -62,6 +62,10 @@ This example shows how you can assign the `ui` namespace to multiple source fold
 > NOTE:
 > This package aims to open up current imitations enforced by open source LWC and on-platform Salesforce development. This is done purely to make your life as a developer easier and is not intended to be used as a part of a production build. These enhancements may allow you to do things that will **NOT** work on-platform.
 
+## Example Usage
+
+See the [playground](./playground/README.md) folder for an example.
+
 ## Example usage with [lwc.dev](https://lwc.dev/) Project
 
 > This assumes you've already setup a LWC project.

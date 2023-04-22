@@ -1,0 +1,34 @@
+{
+  "lwc": {
+    "modules": [
+      { "dir": "$rootDir/src/modules" },
+      { "dir": "$rootDir/force-app/main/default/lwc", "namespace": "c" },
+      {
+        "dirs": [
+          "$rootDir/multi-test/lwc-one/lwc",
+          "$rootDir/multi-test/lwc-two/lwc"
+        ],
+        "namespace": "multi"
+      }
+    ]
+  },
+  "routes": [
+    {
+      "id": "app",
+      "path": "/",
+      "rootComponent": "playground/app"
+    }
+  ],
+  "assets": [
+    {
+      "alias": "assetsDir",
+      "dir": "$rootDir/src/assets",
+      "urlPath": "/public/assets"
+    },
+    {
+      "alias": "favicon",
+      "file": "$rootDir/src/assets/favicon.png",
+      "urlPath": "/favicon.ico"
+    }
+  ]
+}

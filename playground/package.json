@@ -1,0 +1,33 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf node_modules __lwr_cache__ site",
+    "dev": "lwr dev"
+  },
+  "dependencies": {
+    "@lukethacoder/lwc-module-resolver": "link:../",
+    "@lwrjs/loader": "^0.9.4",
+    "lwc": "2.38.1",
+    "lwr": "0.9.4"
+  },
+  "engines": {
+    "node": ">=16.0.0 <20"
+  },
+  "volta": {
+    "node": "16.19.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@lwc/module-resolver": "$@lukethacoder/lwc-module-resolver"
+    }
+  },
+  "devDependencies": {
+    "@lwc/engine-dom": "^2.44.0",
+    "@lwc/synthetic-shadow": "^2.44.0",
+    "@lwrjs/client-modules": "^0.9.4",
+    "@lwrjs/o11y": "^0.9.4",
+    "@lwrjs/router": "^0.9.4"
+  }
+}
