@@ -1,5 +1,5 @@
 /**
- * Methods that edit the core module resolution logic of the `@lwc/module-loader` package.
+ * Methods that edit the core module resolution logic of the `@lwc/module-resolver` package.
  * Edits are to facilitate a more dynamic folder structure.
  *
  * To load LWCs directly (without having to have a namespace folder, e.g. if you're
@@ -38,7 +38,7 @@ import { LwcConfigError } from './errors'
 import { isObject } from './shared'
 
 /**
- * Override of the `@lwc/module-loader` resolveModuleFromDir method
+ * Override of the `@lwc/module-resolver` resolveModuleFromDir method
  */
 export function resolveModuleFromDirEdit(
   specifier: string,
@@ -141,7 +141,7 @@ function resolveModuleFromSingleDir(
 }
 
 /**
- * Override of the `@lwc/module-loader` normalizeConfig method
+ * Override of the `@lwc/module-resolver` normalizeConfig method
  */
 export function normalizeConfigEdit(
   config: Partial<ModuleResolverConfig>,

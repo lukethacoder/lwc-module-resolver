@@ -1,6 +1,6 @@
 "use strict";
 /**
- * Methods that edit the core module resolution logic of the `@lwc/module-loader` package.
+ * Methods that edit the core module resolution logic of the `@lwc/module-resolver` package.
  * Edits are to facilitate a more dynamic folder structure.
  *
  * To load LWCs directly (without having to have a namespace folder, e.g. if you're
@@ -41,7 +41,7 @@ const utils_1 = require("./utils");
 const errors_1 = require("./errors");
 const shared_1 = require("./shared");
 /**
- * Override of the `@lwc/module-loader` resolveModuleFromDir method
+ * Override of the `@lwc/module-resolver` resolveModuleFromDir method
  */
 function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
     const { dir, dirs, namespace: namespaceConfig } = moduleRecord;
@@ -102,7 +102,7 @@ function resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts)
     return (0, utils_1.createRegistryEntry)(entry, specifier, types_1.RegistryType.dir, opts);
 }
 /**
- * Override of the `@lwc/module-loader` normalizeConfig method
+ * Override of the `@lwc/module-resolver` normalizeConfig method
  */
 function normalizeConfigEdit(config, scope) {
     const rootDir = config.rootDir ? path_1.default.resolve(config.rootDir) : process.cwd();

@@ -1,5 +1,5 @@
 /**
- * Methods that edit the core module resolution logic of the `@lwc/module-loader` package.
+ * Methods that edit the core module resolution logic of the `@lwc/module-resolver` package.
  * Edits are to facilitate a more dynamic folder structure.
  *
  * To load LWCs directly (without having to have a namespace folder, e.g. if you're
@@ -29,11 +29,11 @@
  */
 import { RegistryEntry, DirModuleRecord, ModuleResolverConfig, ModuleRecord } from './types';
 /**
- * Override of the `@lwc/module-loader` resolveModuleFromDir method
+ * Override of the `@lwc/module-resolver` resolveModuleFromDir method
  */
 export declare function resolveModuleFromDirEdit(specifier: string, moduleRecord: DirModuleRecord, opts: any): RegistryEntry | undefined;
 /**
- * Override of the `@lwc/module-loader` normalizeConfig method
+ * Override of the `@lwc/module-resolver` normalizeConfig method
  */
 export declare function normalizeConfigEdit(config: Partial<ModuleResolverConfig>, scope: string): ModuleResolverConfig;
 export declare function mergeModulesEdit(userModules: ModuleRecord[], configModules?: ModuleRecord[]): ModuleRecord[];
