@@ -106,3 +106,20 @@ Next, open up your `package.json` and add the below snippet that matches your pa
 > NOTE: you might need to run your package managers install command after adding the override config.
 
 You are now good to go. Running your LWC dev server will now be using the custom `@lukethacoder/lwc-module-resolver` package for module loading. You can go ahead and edit your `lwc.config.json` file to include both namespaced and multi directory folders.
+
+## Development
+
+To get the local `pnpm` package working for development, change the overrides config and the dependencies reference in your test repo to the following:
+
+```json
+{
+  "dependencies": {
+    "@lukethacoder/lwc-module-resolver": "link:/PATH_TO_THIS_REPO/lwc-module-resolver",
+  },
+  "pnpm": {
+    "overrides": {
+      "@lwc/module-resolver": "$@lukethacoder/lwc-module-resolver"
+    }
+  }
+}
+```
