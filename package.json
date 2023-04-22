@@ -4,6 +4,7 @@
   "description": "An opinionated edit to the @lwc/module-resolver package to add support for namespaces and multi directory modules",
   "author": "Luke Secomb",
   "license": "MIT",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/lukethacoder/lwc-module-resolver.git"
