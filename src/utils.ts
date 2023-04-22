@@ -19,7 +19,7 @@ import {
   InnerResolverOptions,
   RegistryType,
 } from './types'
-import { isObject } from './shared'
+import { isDirModuleRecordEdit, mergeModulesEdit, normalizeConfigEdit } from './edits'
 
 export const IS_DEBUG = false
 const PACKAGE_JSON = 'package.json'
@@ -34,7 +34,7 @@ export function isNpmModuleRecord(
 export function isDirModuleRecord(
   moduleRecord: ModuleRecord
 ): moduleRecord is DirModuleRecord {
-  return 'dir' in moduleRecord
+  return isDirModuleRecordEdit(moduleRecord)
 }
 
 export function isAliasModuleRecord(
@@ -78,29 +78,10 @@ export function normalizeConfig(
   config: Partial<ModuleResolverConfig>,
   scope: string
 ): ModuleResolverConfig {
-  const rootDir = config.rootDir ? path.resolve(config.rootDir) : process.cwd()
-  const modules = config.modules || []
-  const normalizedModules = modules.map((m) => {
-    if (!isObject(m)) {
-      throw new LwcConfigError(
-        `Invalid module record. Module record must be an object, instead got ${JSON.stringify(
-          m
-        )}.`,
-        { scope }
-      )
-    }
-    return isDirModuleRecord(m)
-      ? { ...m, dir: path.resolve(rootDir, m.dir) }
-      : m
-  })
-
-  return {
-    modules: normalizedModules,
-    rootDir,
-  }
+  return normalizeConfigEdit(config, scope)
 }
 
-function normalizeDirName(dirName: string): string {
+export function normalizeDirName(dirName: string): string {
   return dirName.endsWith('/') ? dirName : `${dirName}/`
 }
 
@@ -109,33 +90,7 @@ export function mergeModules(
   userModules: ModuleRecord[],
   configModules: ModuleRecord[] = []
 ): ModuleRecord[] {
-  const visitedAlias = new Set()
-  const visitedDirs = new Set()
-  const visitedNpm = new Set()
-  const modules = userModules.slice()
-
-  // Visit the user modules to created an index with the name as keys
-  userModules.forEach((m) => {
-    if (isAliasModuleRecord(m)) {
-      visitedAlias.add(m.name)
-    } else if (isDirModuleRecord(m)) {
-      visitedDirs.add(normalizeDirName(m.dir))
-    } else if (isNpmModuleRecord(m)) {
-      visitedNpm.add(m.npm)
-    }
-  })
-
-  configModules.forEach((m) => {
-    if (
-      (isAliasModuleRecord(m) && !visitedAlias.has(m.name)) ||
-      (isDirModuleRecord(m) && !visitedDirs.has(normalizeDirName(m.dir))) ||
-      (isNpmModuleRecord(m) && !visitedNpm.has(m.npm))
-    ) {
-      modules.push(m)
-    }
-  })
-
-  return modules
+  return mergeModulesEdit(userModules, configModules)
 }
 
 export function findFirstUpwardConfigPath(dirname: string): string {

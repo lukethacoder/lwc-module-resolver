@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.transposeObject = exports.remapList = exports.createRegistryEntry = exports.getLwcConfig = exports.validateNpmAlias = exports.validateNpmConfig = exports.findFirstUpwardConfigPath = exports.mergeModules = exports.normalizeConfig = exports.getModuleEntry = exports.isAliasModuleRecord = exports.isDirModuleRecord = exports.isNpmModuleRecord = void 0;
+exports.transposeObject = exports.remapList = exports.createRegistryEntry = exports.getLwcConfig = exports.validateNpmAlias = exports.validateNpmConfig = exports.findFirstUpwardConfigPath = exports.mergeModules = exports.normalizeDirName = exports.normalizeConfig = exports.getModuleEntry = exports.isAliasModuleRecord = exports.isDirModuleRecord = exports.isNpmModuleRecord = exports.IS_DEBUG = void 0;
 /*
  * Copyright (c) 2018, salesforce.com, inc.
  * All rights reserved.
@@ -13,7 +13,8 @@ exports.transposeObject = exports.remapList = exports.createRegistryEntry = expo
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const errors_1 = require("./errors");
-const shared_1 = require("./shared");
+const edits_1 = require("./edits");
+exports.IS_DEBUG = false;
 const PACKAGE_JSON = 'package.json';
 const LWC_CONFIG_FILE = 'lwc.config.json';
 function isNpmModuleRecord(moduleRecord) {
@@ -21,7 +22,7 @@ function isNpmModuleRecord(moduleRecord) {
 }
 exports.isNpmModuleRecord = isNpmModuleRecord;
 function isDirModuleRecord(moduleRecord) {
-    return 'dir' in moduleRecord;
+    return (0, edits_1.isDirModuleRecordEdit)(moduleRecord);
 }
 exports.isDirModuleRecord = isDirModuleRecord;
 function isAliasModuleRecord(moduleRecord) {
@@ -53,51 +54,16 @@ function getModuleEntry(moduleDir, moduleName, opts) {
 }
 exports.getModuleEntry = getModuleEntry;
 function normalizeConfig(config, scope) {
-    const rootDir = config.rootDir ? path_1.default.resolve(config.rootDir) : process.cwd();
-    const modules = config.modules || [];
-    const normalizedModules = modules.map((m) => {
-        if (!(0, shared_1.isObject)(m)) {
-            throw new errors_1.LwcConfigError(`Invalid module record. Module record must be an object, instead got ${JSON.stringify(m)}.`, { scope });
-        }
-        return isDirModuleRecord(m)
-            ? { ...m, dir: path_1.default.resolve(rootDir, m.dir) }
-            : m;
-    });
-    return {
-        modules: normalizedModules,
-        rootDir,
-    };
+    return (0, edits_1.normalizeConfigEdit)(config, scope);
 }
 exports.normalizeConfig = normalizeConfig;
 function normalizeDirName(dirName) {
     return dirName.endsWith('/') ? dirName : `${dirName}/`;
 }
+exports.normalizeDirName = normalizeDirName;
 // User defined modules will have precedence over the ones defined elsewhere (ex. npm)
 function mergeModules(userModules, configModules = []) {
-    const visitedAlias = new Set();
-    const visitedDirs = new Set();
-    const visitedNpm = new Set();
-    const modules = userModules.slice();
-    // Visit the user modules to created an index with the name as keys
-    userModules.forEach((m) => {
-        if (isAliasModuleRecord(m)) {
-            visitedAlias.add(m.name);
-        }
-        else if (isDirModuleRecord(m)) {
-            visitedDirs.add(normalizeDirName(m.dir));
-        }
-        else if (isNpmModuleRecord(m)) {
-            visitedNpm.add(m.npm);
-        }
-    });
-    configModules.forEach((m) => {
-        if ((isAliasModuleRecord(m) && !visitedAlias.has(m.name)) ||
-            (isDirModuleRecord(m) && !visitedDirs.has(normalizeDirName(m.dir))) ||
-            (isNpmModuleRecord(m) && !visitedNpm.has(m.npm))) {
-            modules.push(m);
-        }
-    });
-    return modules;
+    return (0, edits_1.mergeModulesEdit)(userModules, configModules);
 }
 exports.mergeModules = mergeModules;
 function findFirstUpwardConfigPath(dirname) {

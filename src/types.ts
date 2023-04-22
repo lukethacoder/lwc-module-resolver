@@ -23,7 +23,8 @@ export interface AliasModuleRecord {
 }
 
 export interface DirModuleRecord {
-  dir: string
+  dir?: string
+  dirs?: string[]
   namespace?: string
 }
 
