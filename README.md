@@ -1,11 +1,11 @@
-# @lukethacoder/lwc-module-loader
+# @lukethacoder/lwc-module-resolver
 
 ⚡ An opinionated edit to the [`@lwc/module-resolver`](https://github.com/salesforce/lwc/blob/master/packages/%40lwc/module-resolver/README.md)  package to add support for namespaces and multi directory modules
 
 ## Install
 
 ```cmd
-pnpm add @lukethacoder/lwc-module-loader
+pnpm add @lukethacoder/lwc-module-resolver
 ```
 
 ## Custom Namespace Directories

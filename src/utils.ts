@@ -19,7 +19,11 @@ import {
   InnerResolverOptions,
   RegistryType,
 } from './types'
-import { isDirModuleRecordEdit, mergeModulesEdit, normalizeConfigEdit } from './edits'
+import {
+  isDirModuleRecordEdit,
+  mergeModulesEdit,
+  normalizeConfigEdit,
+} from './edits'
 
 export const IS_DEBUG = false
 const PACKAGE_JSON = 'package.json'

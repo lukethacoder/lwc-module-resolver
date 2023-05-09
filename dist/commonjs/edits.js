@@ -52,7 +52,7 @@ function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
         return resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts);
     }
     else if (dirs) {
-        // if multiple "dirs" have been set    
+        // if multiple "dirs" have been set
         const potentialModuleDirs = dirs.map(singleDir => resolveModuleFromSingleDir(specifier, moduleRecord, (0, path_2.isAbsolute)(singleDir) ? singleDir : (0, path_2.join)(rootDir, singleDir), {
             ...opts,
             isCheckingMultiDir: true
@@ -61,7 +61,16 @@ function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
             throw new errors_1.LwcConfigError(`Conflicting LWCs found in directories for module "${JSON.stringify(moduleRecord)}"`, { scope: JSON.stringify(dirs) });
         }
         else if (potentialModuleDirs.length === 0) {
-            throw new errors_1.LwcConfigError(`Invalid dirs module record "${JSON.stringify(moduleRecord)}", does not exist`, { scope: JSON.stringify(dirs) });
+            if (specifier !== 'lwc') {
+                utils_1.IS_DEBUG && console.warn(`Invalid dirs module record "${specifier}": ${JSON.stringify(moduleRecord)}, does not exist`);
+            }
+            return undefined;
+            // throw new LwcConfigError(
+            //   `Invalid dirs module record "${specifier}": "${JSON.stringify(
+            //     moduleRecord
+            //   )}", does not exist`,
+            //   { scope: JSON.stringify(dirs) }
+            // )
         }
         return potentialModuleDirs[0];
     }
@@ -74,7 +83,7 @@ function resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts)
         // if multi dir, the LWC might be in another directory,
         // so don't throw an error here
         if (isCheckingMultiDir) {
-            console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`);
+            utils_1.IS_DEBUG && console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`);
             return;
         }
         // if its a single dir, keep the existing error
@@ -114,8 +123,8 @@ function normalizeConfigEdit(config, scope) {
         return isDirModuleRecordEdit(m)
             ? {
                 ...m,
-                dir: m.dir ? path_1.default.resolve(rootDir, m.dir) : '',
-                dirs: m.dirs ? m.dirs.map(singleDir => path_1.default.resolve(rootDir, singleDir.replace('$rootDir/', ''))) : [],
+                ...(m.dir ? { dir: path_1.default.resolve(rootDir, m.dir) } : {}),
+                ...(m.dirs ? { dirs: m.dirs.map(singleDir => path_1.default.resolve(rootDir, singleDir.replace('$rootDir/', ''))) } : {}),
             }
             : m;
     });

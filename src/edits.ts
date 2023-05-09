@@ -47,13 +47,13 @@ export function resolveModuleFromDirEdit(
 ): RegistryEntry | undefined {
   const { dir, dirs, namespace: namespaceConfig } = moduleRecord
   const { rootDir } = opts
-
+  
   // if single directory for namespace
   if (dir) {
     const absModuleDir = isAbsolute(dir) ? dir : join(rootDir, dir)
     return resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts)    
   } else if (dirs) {
-    // if multiple "dirs" have been set    
+    // if multiple "dirs" have been set
     const potentialModuleDirs = dirs.map(singleDir => resolveModuleFromSingleDir(
       specifier,
       moduleRecord,
@@ -72,12 +72,17 @@ export function resolveModuleFromDirEdit(
         { scope: JSON.stringify(dirs) }
       )
     } else if (potentialModuleDirs.length === 0) {
-      throw new LwcConfigError(
-        `Invalid dirs module record "${JSON.stringify(
-          moduleRecord
-        )}", does not exist`,
-        { scope: JSON.stringify(dirs) }
-      )
+      if (specifier !== 'lwc') {
+        IS_DEBUG && console.warn(`Invalid dirs module record "${specifier}": ${JSON.stringify(moduleRecord)}, does not exist`)
+      }
+      
+      return undefined
+      // throw new LwcConfigError(
+      //   `Invalid dirs module record "${specifier}": "${JSON.stringify(
+      //     moduleRecord
+      //   )}", does not exist`,
+      //   { scope: JSON.stringify(dirs) }
+      // )
     }
 
     return potentialModuleDirs[0]
@@ -97,7 +102,7 @@ function resolveModuleFromSingleDir(
     // if multi dir, the LWC might be in another directory,
     // so don't throw an error here
     if (isCheckingMultiDir) {
-      console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`)
+      IS_DEBUG && console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`)
       return
     }
     
@@ -160,12 +165,12 @@ export function normalizeConfigEdit(
     }
 
     return isDirModuleRecordEdit(m)
-    ? { 
-        ...m,
-        dir: m.dir ? path.resolve(rootDir, m.dir) : '',
-        dirs: m.dirs ? m.dirs.map(singleDir => path.resolve(rootDir, singleDir.replace('$rootDir/', ''))) : [],
-      }
-    : m
+      ? {
+          ...m,
+          ...(m.dir ? { dir: path.resolve(rootDir, m.dir) } : {}),
+          ...(m.dirs ? { dirs: m.dirs.map(singleDir => path.resolve(rootDir, singleDir.replace('$rootDir/', ''))) } : {}),
+        }
+      : m
   })
 
   return {
