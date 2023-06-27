@@ -9,7 +9,7 @@
   "dependencies": {
     "@lukethacoder/lwc-module-resolver": "link:../",
     "@lwrjs/loader": "^0.9.4",
-    "lwc": "^2.49.1",
+    "lwc": "^3.0.0",
     "lwr": "^0.9.4"
   },
   "engines": {
@@ -24,8 +24,8 @@
     }
   },
   "devDependencies": {
-    "@lwc/engine-dom": "^2.49.1",
-    "@lwc/synthetic-shadow": "^2.49.1",
+    "@lwc/engine-dom": "^3.0.0",
+    "@lwc/synthetic-shadow": "^3.0.0",
     "@lwrjs/client-modules": "^0.9.4",
     "@lwrjs/o11y": "^0.9.4",
     "@lwrjs/router": "^0.9.4"
