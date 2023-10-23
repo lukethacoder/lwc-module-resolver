@@ -5,18 +5,19 @@
     "declaration": true,
     "sourceMap": true,
 
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
 
     "target": "es2018",
     "lib": ["es2018"],
-
+        
     // Disable automatic inclusion of @types packages
-    // "types": ["node"], // "jest"
-    
-    "outDir": "dist/commonjs",
-    "declarationDir": "dist/types"
+    "types": ["node"],
+
+    // @rollup/plugin-typescript is actually responsible for writing dist files. Using "." as the declarationDir
+    // ensures that .d.ts files are co-located with JS files, e.g. `dist/index.js` and `dist/index.d.ts`.
+    "declarationDir": "."
   },
 
   "include": ["src/"],

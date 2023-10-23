@@ -155,7 +155,7 @@ function resolveModuleRecordType(
   }
 
   throw new LwcConfigError(
-    `Unknown module record "${JSON.stringify(moduleRecord)}"`,
+    `Unknown module record "${JSON.stringify(moduleRecord, undefined, 2)}"`,
     {
       scope: rootDir,
     }

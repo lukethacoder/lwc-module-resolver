@@ -2,3 +2,4 @@
 **/node_modules
 
 **/__lwr_cache__
+**/.rollup.cache
