@@ -94,7 +94,6 @@ function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
     else if (dirs) {
         // if multiple "dirs" have been set
         const potentialModuleDirs = dirs.map(singleDir => resolveModuleFromSingleDir(specifier, moduleRecord, path.isAbsolute(singleDir) ? singleDir : path.join(rootDir, singleDir), Object.assign(Object.assign({}, opts), { isCheckingMultiDir: true }))).filter(module => !!module);
-        console.log('potentialModuleDirs ', potentialModuleDirs);
         if (potentialModuleDirs.length > 1) {
             throw new LwcConfigError(`Conflicting LWCs found in directories for module "${JSON.stringify(moduleRecord)}"`, { scope: JSON.stringify(dirs) });
         }
@@ -379,12 +378,10 @@ function resolveModuleFromNpm(specifier, npmModuleRecord, opts) {
 }
 function resolveModuleRecordType(specifier, moduleRecord, opts) {
     const { rootDir } = opts;
-    console.log('JSON.stringify(moduleRecord, undefined, 2) ', JSON.stringify(moduleRecord, undefined, 2));
     if (isAliasModuleRecord(moduleRecord)) {
         return resolveModuleFromAlias(specifier, moduleRecord, { rootDir });
     }
     else if (isDirModuleRecord(moduleRecord)) {
-        console.log('module is dir(s) ', moduleRecord);
         return resolveModuleFromDir(specifier, moduleRecord, { rootDir });
     }
     else if (isNpmModuleRecord(moduleRecord)) {
@@ -395,11 +392,6 @@ function resolveModuleRecordType(specifier, moduleRecord, opts) {
     });
 }
 function resolveModule(importee, dirname, config) {
-    console.log(`
-🚀🚀🚀
-Using override
-🚀🚀🚀
-  `);
     if (typeof importee !== 'string') {
         throw new TypeError(`The importee argument must be a string. Received type ${typeof importee}`);
     }
