@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2024, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: MIT
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
@@ -167,6 +167,7 @@ export function getLwcConfig(dirname: string): LwcConfig {
   if (fs.existsSync(lwcConfigPath)) {
     return require(lwcConfigPath)
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     return require(packageJsonPath).lwc ?? {}
   }
 }

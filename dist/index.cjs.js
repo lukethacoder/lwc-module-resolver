@@ -42,10 +42,16 @@ exports.RegistryType = void 0;
 })(exports.RegistryType || (exports.RegistryType = {}));
 
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2024, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: MIT
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
+ */
+/**
+ * Determines whether the given value is an object or null.
+ * @param obj The value to check
+ * @returns true if the value is an object or null
+ * @example isObject(null) // true
  */
 function isObject(obj) {
     return typeof obj === 'object';
@@ -84,7 +90,7 @@ function isObject(obj) {
  * Override of the `@lwc/module-resolver` resolveModuleFromDir method
  */
 function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
-    const { dir, dirs, namespace: namespaceConfig } = moduleRecord;
+    const { dir, dirs } = moduleRecord;
     const { rootDir } = opts;
     // if single directory for namespace
     if (dir) {
@@ -93,7 +99,9 @@ function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
     }
     else if (dirs) {
         // if multiple "dirs" have been set
-        const potentialModuleDirs = dirs.map(singleDir => resolveModuleFromSingleDir(specifier, moduleRecord, path.isAbsolute(singleDir) ? singleDir : path.join(rootDir, singleDir), Object.assign(Object.assign({}, opts), { isCheckingMultiDir: true }))).filter(module => !!module);
+        const potentialModuleDirs = dirs
+            .map((singleDir) => resolveModuleFromSingleDir(specifier, moduleRecord, path.isAbsolute(singleDir) ? singleDir : path.join(rootDir, singleDir), Object.assign(Object.assign({}, opts), { isCheckingMultiDir: true })))
+            .filter((module) => !!module);
         if (potentialModuleDirs.length > 1) {
             throw new LwcConfigError(`Conflicting LWCs found in directories for module "${JSON.stringify(moduleRecord)}"`, { scope: JSON.stringify(dirs) });
         }
@@ -110,7 +118,7 @@ function resolveModuleFromDirEdit(specifier, moduleRecord, opts) {
     }
 }
 function resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts) {
-    const { namespace: namespaceConfig } = moduleRecord;
+    const { namespace: namespaceValue } = moduleRecord;
     const { isCheckingMultiDir } = opts;
     if (!fs.existsSync(absModuleDir)) {
         // if multi dir, the LWC might be in another directory,
@@ -127,11 +135,18 @@ function resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts)
     const namespace = parts[0];
     const name = parts[1];
     // check we have both a namespace and a name for the import
-    if (!((namespace || namespaceConfig) && name)) {
+    if (!((namespace || namespaceValue) && name)) {
         return;
     }
+    if (namespaceValue) {
+        // allow diff namespaced dirs to have the same module name
+        if (namespaceValue !== namespace) {
+            // non-matching namespaces, no LWC here
+            return;
+        }
+    }
     // handle both namespaced folders and namespace config
-    const moduleDir = namespaceConfig
+    const moduleDir = namespaceValue
         ? path.join(absModuleDir, name)
         : path.join(absModuleDir, namespace, name);
     // Exit if the expected module directory doesn't exists.
@@ -197,7 +212,7 @@ function isDirModuleRecordEdit(moduleRecord) {
 }
 
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2024, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: MIT
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
@@ -291,6 +306,7 @@ function getLwcConfig(dirname) {
         return require(lwcConfigPath);
     }
     else {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         return (_a = require(packageJsonPath).lwc) !== null && _a !== void 0 ? _a : {};
     }
 }
@@ -313,7 +329,7 @@ function transposeObject(map) {
 }
 
 /*
- * Copyright (c) 2018, salesforce.com, inc.
+ * Copyright (c) 2024, Salesforce, Inc.
  * All rights reserved.
  * SPDX-License-Identifier: MIT
  * For full license text, see the LICENSE file in the repo root or https://opensource.org/licenses/MIT
@@ -420,5 +436,5 @@ function resolveModule(importee, dirname, config) {
 }
 
 exports.resolveModule = resolveModule;
-/** version: 4.0.0 */
+/** version: 6.5.0 */
 //# sourceMappingURL=index.cjs.js.map

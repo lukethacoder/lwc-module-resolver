@@ -45,24 +45,34 @@ export function resolveModuleFromDirEdit(
   moduleRecord: DirModuleRecord,
   opts: any
 ): RegistryEntry | undefined {
-  const { dir, dirs, namespace: namespaceConfig } = moduleRecord
+  const { dir, dirs } = moduleRecord
   const { rootDir } = opts
-  
+
   // if single directory for namespace
   if (dir) {
     const absModuleDir = isAbsolute(dir) ? dir : join(rootDir, dir)
-    return resolveModuleFromSingleDir(specifier, moduleRecord, absModuleDir, opts)    
-  } else if (dirs) {
-    // if multiple "dirs" have been set
-    const potentialModuleDirs = dirs.map(singleDir => resolveModuleFromSingleDir(
+
+    return resolveModuleFromSingleDir(
       specifier,
       moduleRecord,
-      isAbsolute(singleDir) ? singleDir : join(rootDir, singleDir),
-      {
-        ...opts,
-        isCheckingMultiDir: true
-      }
-    )).filter(module => !!module)
+      absModuleDir,
+      opts
+    )
+  } else if (dirs) {
+    // if multiple "dirs" have been set
+    const potentialModuleDirs = dirs
+      .map((singleDir) =>
+        resolveModuleFromSingleDir(
+          specifier,
+          moduleRecord,
+          isAbsolute(singleDir) ? singleDir : join(rootDir, singleDir),
+          {
+            ...opts,
+            isCheckingMultiDir: true,
+          }
+        )
+      )
+      .filter((module) => !!module)
 
     if (potentialModuleDirs.length > 1) {
       throw new LwcConfigError(
@@ -73,9 +83,14 @@ export function resolveModuleFromDirEdit(
       )
     } else if (potentialModuleDirs.length === 0) {
       if (specifier !== 'lwc') {
-        IS_DEBUG && console.warn(`Invalid dirs module record "${specifier}": ${JSON.stringify(moduleRecord)}, does not exist`)
+        IS_DEBUG &&
+          console.warn(
+            `Invalid dirs module record "${specifier}": ${JSON.stringify(
+              moduleRecord
+            )}, does not exist`
+          )
       }
-      
+
       return undefined
       // throw new LwcConfigError(
       //   `Invalid dirs module record "${specifier}": "${JSON.stringify(
@@ -95,17 +110,18 @@ function resolveModuleFromSingleDir(
   absModuleDir: string,
   opts: any
 ): RegistryEntry | undefined {
-  const { namespace: namespaceConfig } = moduleRecord
+  const { namespace: namespaceValue } = moduleRecord
   const { isCheckingMultiDir } = opts
 
   if (!fs.existsSync(absModuleDir)) {
     // if multi dir, the LWC might be in another directory,
     // so don't throw an error here
     if (isCheckingMultiDir) {
-      IS_DEBUG && console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`)
+      IS_DEBUG &&
+        console.warn(`Unable to find ${specifier} in dir of ${absModuleDir}`)
       return
     }
-    
+
     // if its a single dir, keep the existing error
     throw new LwcConfigError(
       `Invalid dir module record "${JSON.stringify(
@@ -122,22 +138,36 @@ function resolveModuleFromSingleDir(
   const name = parts[1]
 
   // check we have both a namespace and a name for the import
-  if (!((namespace || namespaceConfig) && name)) {
+  if (!((namespace || namespaceValue) && name)) {
     return
   }
 
+  if (namespaceValue) {
+    // allow diff namespaced dirs to have the same module name
+    if (namespaceValue !== namespace) {
+      IS_DEBUG &&
+        console.warn(
+          `${specifier}: Specifier namespace and namespace config do not match ${absModuleDir}`,
+          JSON.stringify(moduleRecord, undefined, 2)
+        )
+      // non-matching namespaces, no LWC here
+      return
+    }
+  }
+
   // handle both namespaced folders and namespace config
-  const moduleDir = namespaceConfig
+  const moduleDir = namespaceValue
     ? join(absModuleDir, name)
     : join(absModuleDir, namespace, name)
 
   // Exit if the expected module directory doesn't exists.
   if (!fs.existsSync(moduleDir)) {
-    IS_DEBUG && console.warn(
-      `${moduleDir}: Module does not exist ${
-        namespace || namespaceConfig
-      }/${name}`
-    )
+    IS_DEBUG &&
+      console.warn(
+        `${moduleDir}: Module does not exist ${
+          namespace || namespaceValue
+        }/${name}`
+      )
     return
   }
 

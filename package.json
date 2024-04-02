@@ -1,6 +1,6 @@
 {
   "name": "@lukethacoder/lwc-module-resolver",
-  "version": "4.0.1",
+  "version": "6.5.0",
   "description": "⚡ An opinionated edit to the @lwc/module-resolver package to add support for namespaces and multi directory modules",
   "author": "Luke Secomb",
   "license": "MIT",
